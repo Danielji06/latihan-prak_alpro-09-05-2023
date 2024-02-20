@@ -1,43 +1,81 @@
-daftar_harga = [
-    {"nama": "apel", "harga": 10000}, 
-    {"nama": "jeruk", "harga": 20000},
-    {"nama": "durian", "harga": 120000},
-    {"nama": "kiwi", "harga": 60000},
-    {"nama": "melon", "harga": 300000},
-]
+class SmartCard {
+    private String nama;
+    private long saldo;
 
-# tampilkan semua nama buah dan harganya
-for buah in daftar_harga:
-    print(f'{buah["nama"]} - {buah["harga"]}')
+    public void setNama(String nama) {
+        this.nama = nama;
+    }
 
-# tampilkan nama buah yang paling mahal
-harga_termahal = 0
-nama_buah_termahal = ''
-for buah in daftar_harga:
-    if buah['harga'] > harga_termahal:
-        harga_termahal = buah['harga']
-        nama_buah_termahal = buah["nama"]
-print(f"Nama buah termahal adalah {nama_buah_termahal} dengan harga {harga_termahal}")
+    public String getNama() {
+        return nama;
+    }
 
-# hapus buah yang harganya < 100000
-batas_harga = 100000
+    public void setSaldo(long saldo) {
+        if (saldo > 0) {
+            this.saldo = saldo;
+        }
+    }
 
-# ambil jumlah harga dalam list
-count = len(daftar_harga)
-index = 0
-while index < count:
-    if daftar_harga[index]["harga"] < batas_harga:
-        del daftar_harga[index]
-    else:
-        index = index + 1
-        count = len(daftar_harga)
-'''
-for index in range(len(daftar_harga)):
-    if daftar_harga[index]['harga'] < batas_harga:
-        del daftar_harga[index]
-'''
-        
-# tampilkan semua nama buah dan harganya
-print("Setelah semua buah di bawah batas harga dihapus")
-for buah in daftar_harga:
-    print(f'{buah["nama"]} - {buah["harga"]}')
+    public long getSaldo() {
+        return saldo;
+    }
+
+    public void topUp(Voucher vch) {
+        String kodeVoucher = vch.getKode();
+        long nominal = vch.getNominal();
+
+        if (kodeVoucher.equals("VC")) {
+            System.out.println("Kode Voucher: " + kodeVoucher + " || Top up gagal! Kode voucher tidak valid.");
+        } else if (kodeVoucher.equals("VC" + nominal)) {
+            saldo += nominal;
+            System.out.println("Kode Voucher: " + kodeVoucher + " || Top up sukses! Saldo " + nama + " saat ini Rp " + saldo);
+        }
+    }
+}
+
+class Voucher {
+    private String kode;
+    private long nominal;
+
+    public void setNominal(long nominal) {
+        this.nominal = nominal;
+    }
+
+    public long getNominal() {
+        return nominal;
+    }
+
+    public String getKode() {
+        if (nominal == 0) {
+            kode = "VC";
+        } else {
+            kode = "VC" + nominal;
+        }
+        return kode;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        SmartCard card = new SmartCard();
+        card.setNama("Guntur Putra");
+        card.setSaldo(50000);
+
+        Voucher voucher1 = new Voucher();
+        voucher1.setNominal(0);
+
+        Voucher voucher2 = new Voucher();
+        voucher2.setNominal(50000);
+
+        Voucher voucher3 = new Voucher();
+        voucher3.setNominal(150000);
+
+        System.out.println("Skenario 1: Top Up Gagal");
+        card.topUp(voucher1);
+        System.out.println("Saldo " + card.getNama() + " saat ini Rp " + card.getSaldo());
+
+        System.out.println("\nSkenario 2: Top Up Sukses");
+        card.topUp(voucher2);
+        card.topUp(voucher3);
+    }
+}
