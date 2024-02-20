@@ -1,81 +1,53 @@
-class SmartCard {
-    private String nama;
-    private long saldo;
+public class Buku {
+    private static int nextNum = 1;
 
-    public void setNama(String nama) {
-        this.nama = nama;
-    }
-
-    public String getNama() {
-        return nama;
-    }
-
-    public void setSaldo(long saldo) {
-        if (saldo > 0) {
-            this.saldo = saldo;
-        }
-    }
-
-    public long getSaldo() {
-        return saldo;
-    }
-
-    public void topUp(Voucher vch) {
-        String kodeVoucher = vch.getKode();
-        long nominal = vch.getNominal();
-
-        if (kodeVoucher.equals("VC")) {
-            System.out.println("Kode Voucher: " + kodeVoucher + " || Top up gagal! Kode voucher tidak valid.");
-        } else if (kodeVoucher.equals("VC" + nominal)) {
-            saldo += nominal;
-            System.out.println("Kode Voucher: " + kodeVoucher + " || Top up sukses! Saldo " + nama + " saat ini Rp " + saldo);
-        }
-    }
-}
-
-class Voucher {
     private String kode;
-    private long nominal;
+    private String judul;
+    private String penulis;
+    private long harga;
+    private int stok;
 
-    public void setNominal(long nominal) {
-        this.nominal = nominal;
-    }
-
-    public long getNominal() {
-        return nominal;
-    }
-
-    public String getKode() {
-        if (nominal == 0) {
-            kode = "VC";
+    // Constructor
+    public Buku(String argJudul, String argPenulis, long argHarga, int argStok) {
+        judul = argJudul;
+        penulis = argPenulis;
+        if (argHarga <= 0) {
+            harga = 0;
         } else {
-            kode = "VC" + nominal;
+            harga = argHarga;
         }
+        if (argStok <= 0) {
+            stok = 0;
+        } else {
+            stok = argStok;
+        }
+        generateKode();
+    }
+
+    // Method untuk generate kode buku
+    private void generateKode() {
+        kode = "NV" + String.format("%06d", nextNum);
+        nextNum++;
+    }
+
+    // Getter methods
+    public String getKode() {
         return kode;
     }
-}
 
-public class Main {
-    public static void main(String[] args) {
-        SmartCard card = new SmartCard();
-        card.setNama("Guntur Putra");
-        card.setSaldo(50000);
+    public String getJudul() {
+        return judul;
+    }
 
-        Voucher voucher1 = new Voucher();
-        voucher1.setNominal(0);
+    public String getPenulis() {
+        return penulis;
+    }
 
-        Voucher voucher2 = new Voucher();
-        voucher2.setNominal(50000);
+    public long getHarga() {
+        return harga;
+    }
 
-        Voucher voucher3 = new Voucher();
-        voucher3.setNominal(150000);
-
-        System.out.println("Skenario 1: Top Up Gagal");
-        card.topUp(voucher1);
-        System.out.println("Saldo " + card.getNama() + " saat ini Rp " + card.getSaldo());
-
-        System.out.println("\nSkenario 2: Top Up Sukses");
-        card.topUp(voucher2);
-        card.topUp(voucher3);
+    public int getStok() {
+        return stok;
     }
 }
